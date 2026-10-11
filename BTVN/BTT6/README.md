@@ -1,78 +1,73 @@
-# React + TypeScript + Vite
+# BTT6 - Kiểm Thử Frontend & Code Coverage (Module Giỏ Hàng & Sản Phẩm)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ứng dụng thương mại điện tử với module Giỏ hàng và Sản phẩm được xây dựng bằng **React 19**, **Redux Toolkit**, **TypeScript**, và **Vite**, đi kèm bộ kiểm thử tự động toàn diện sử dụng **Vitest** và **React Testing Library (RTL)**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📌 Tổng Quan Bộ Kiểm Thử
 
-## React Compiler
+Bài tập hoàn thành đầy đủ các tiêu chuẩn kiểm thử Frontend theo yêu cầu của học phần:
+- **Module kiểm thử:** Giỏ hàng (`features/cart`) & Sản phẩm (`features/products`), Custom Hook (`useCart`), và hàm tiện ích (`cartUtils`).
+- **Số lượng test:** **64 test cases** (vượt xa yêu cầu tối thiểu 10 tests), bao gồm đầy đủ Unit test và Integration test.
+- **Kiểm thử bất đồng bộ:** Mock API bất đồng bộ với thunk `fetchProducts` (xử lý cả 2 kịch bản `success` và `error`).
+- **Chất lượng mã nguồn:** TypeScript nghiêm ngặt, 0 lỗi ESLint, build production thành công.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+---
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+## 📊 Báo Cáo Độ Bao Phủ Mã Nguồn (Code Coverage)
 
-## Expanding the ESLint configuration
+Toàn bộ module đạt độ bao phủ vượt trội ngưỡng yêu cầu $\ge 70\%$:
+- **Lines Coverage:** **$99.09\%$**
+- **Functions Coverage:** **$100\%$**
+- **Statements Coverage:** **$82.38\%$**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Ảnh Chụp Báo Cáo Coverage Thực Tế
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+![Báo cáo Code Coverage](./coverage.png)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🛠️ Cấu Trúc Các Tệp Kiểm Thử
 
 ```
+src/
+├── features/
+│   ├── cart/
+│   │   ├── cartSlice.test.ts        # Unit test Redux Reducer & Selectors (13 tests)
+│   │   ├── CartItem.test.tsx        # Integration test Component mặt hàng giỏ (5 tests)
+│   │   └── Cart.test.tsx            # Integration test Component giỏ hàng (7 tests)
+│   └── products/
+│       ├── productsSlice.test.ts    # Unit & Async test Thunk với Mock API (11 tests)
+│       ├── productsApi.test.ts      # Unit test hàm gọi API giả lập (1 test)
+│       └── ProductItem.test.tsx     # Integration test Component thẻ sản phẩm (3 tests)
+├── hooks/
+│   └── useCart.test.tsx             # Unit test Custom Hook với Redux wrapper (5 tests)
+├── utils/
+│   └── cartUtils.test.ts            # Unit test hàm tính toán tài chính & coupon (19 tests)
+└── test/
+    ├── setup.ts                     # Cấu hình Jest-DOM matchers & Vitest cleanup
+    ├── test-utils.tsx               # Helper renderWithProviders & setupTestStore
+    └── mockData.ts                  # Mock dataset cô lập phục vụ kiểm thử
+```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Hướng Dẫn Chạy Kiểm Thử
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 1. Cài đặt dependencies (nếu chưa cài)
+npm install
 
+# 2. Chạy toàn bộ 64 test cases
+npm test
+
+# 3. Chạy kiểm thử kèm xuất báo cáo coverage
+npm run test:coverage
+
+# 4. Chạy qua Jest proxy (theo cú pháp 'jest --coverage' của đề bài)
+./bin/jest.cjs --coverage
+
+# 5. Kiểm tra build và linting mã nguồn
+npm run lint
+npm run build
 ```
